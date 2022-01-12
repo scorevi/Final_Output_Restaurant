@@ -22,7 +22,7 @@ class MainProgram {
 
                 readLine()
 
-        while (!loginState) {
+        while (!loginState) { // check login state
 
 
             if (username == "admin" && password == "admin1234") {
