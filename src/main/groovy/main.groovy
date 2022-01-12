@@ -9,15 +9,13 @@ println("Login to RestoFinder")
 
 print("Username: ")
 
-username = System.in.newReader().
-
-        readLine()
+username = System.in.newReader().readLine()
 
 print("Password: ")
 
-password = System.in.newReader().
+password = System.in.newReader().readLine()
 
-        readLine()
+
 
 while (!loginState) {
 
@@ -53,9 +51,9 @@ println("---Main Menu---")
 
 println("1. Search Restaurants")
 
-println("2. Restaurant List")
+println("2. View Restaurant List")
 
-println("3. Location List")
+println("3. View Location List")
 
 println("4. Help")
 
@@ -110,8 +108,19 @@ switch (userRole) { // Checking user privileges
 
 }
 
+// Methods //
 
-// Methods
+// User Functions ---
+
+void SearchRestaurants() {
+
+}
+
+void ViewListFunc() { // View restaurants and locations
+
+}
+
+// Administrator Functions ---
 
 void AddRestaurant() {
 
