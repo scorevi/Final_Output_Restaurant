@@ -115,8 +115,6 @@ class MainProgram {
     }
 }
 
-// End of Main Class
-
 // Methods
 
 void AddRestaurant() {
