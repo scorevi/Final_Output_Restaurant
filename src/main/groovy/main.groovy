@@ -1,9 +1,16 @@
+class Globals {
+    static List restoNameList = []
+    static List locationList = []
+    static List categoryList = []
+    static List restaurantList = []
+}
+
+
 def username
 def password
 def userRole
 def loginState = false
 def optionSelected
-
 
 println("Login to RestoFinder")
 
@@ -65,6 +72,8 @@ if (userRole == "Administrator") {
     println("7. Edit Restaurant")
     println("8. Remove Restaurant")
     println("9. Remove Location")
+    println("10. Add Category")
+    println("11. Remove Category")
 
 }
 
@@ -72,27 +81,25 @@ println("")
 
 print("Selection: ")
 
-optionSelected = System.in.newReader().
-
-        readLine()
+optionSelected = System.in.newReader().readLine()
 
 switch (userRole) { // Checking user privileges
 
     case "Administrator":
         switch (optionSelected) {
-            case 5:
+            case "5":
                 AddRestaurant()
                 break
-            case 6:
+            case "6":
                 AddLocation()
                 break
-            case 7:
+            case "7":
                 EditRestaurant()
                 break
-            case 8:
+            case "8":
                 RemoveRestaurant()
                 break
-            case 9:
+            case "9":
                 RemoveLocation()
                 break
 
@@ -100,7 +107,7 @@ switch (userRole) { // Checking user privileges
 
     default: // User for default case
         switch (optionSelected) {
-            case 1:
+            case "1":
                 break
 
         }
@@ -123,6 +130,29 @@ void ViewListFunc() { // View restaurants and locations
 // Administrator Functions ---
 
 void AddRestaurant() {
+    def restoName
+    def restoLocation
+    def restoCategory
+
+    println("--Add Restaurant--")
+    print("Name: ")
+    restoName = System.in.newReader().readLine()
+    Globals.restaurantList.add(restoName)
+    println(Globals.restaurantList.get(0))
+
+    print("Location: ")
+    restoLocation = System.in.newReader().readLine()
+
+    if (restoLocation in Globals.locationList) {
+        print("Category: ")
+        restoCategory = System.in.newReader().readLine()
+
+        if (restoCategory in Globals.categoryList) {
+            println("Successfully added restaurant to the list!")
+
+        }
+
+    }
 
 }
 
@@ -139,5 +169,13 @@ void RemoveRestaurant() {
 }
 
 void RemoveLocation() {
+
+}
+
+void AddCategory() {
+
+}
+
+void RemoveCategory() {
 
 }
