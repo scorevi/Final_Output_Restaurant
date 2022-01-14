@@ -1,117 +1,146 @@
 class Globals {
     static List restoNameList = []
-    static List locationList = []
-    static List categoryList = []
-    static List restaurantList = []
+    static List locationList = ["Balintawak", "Kamuning", "Quezon Ave."]
+    static List categoryList = ["Fine Dining", "Fast Food", "Desserts"]
+    static List restaurantList = [][]
+
+    static def restoCount = 0
+
+    static def username
+    static def password
+    static def userRole
+    static def loginState = false
+    static def optionSelected
+
 }
 
+restoLogin()
 
-def username
-def password
-def userRole
-def loginState = false
-def optionSelected
+void restoLogin() { // a.k.a Main Method
 
-println("Login to RestoFinder")
+    println("Login to RestoFinder")
 
-print("Username: ")
+    print("Username: ")
 
-username = System.in.newReader().readLine()
+    Globals.username = System.in.newReader().readLine()
 
-print("Password: ")
+    print("Password: ")
 
-password = System.in.newReader().readLine()
+    Globals.password = System.in.newReader().readLine()
 
 
+    while (!Globals.loginState) {
 
-while (!loginState) {
 
+        if (Globals.username == "admin" && Globals.password == "admin1234") {
+            Globals.loginState = true
+            Globals.userRole = "Administrator"
+            println("")
+            println("Login Success!")
+            initializeMainMenu()
+            break
+        } else if (Globals.username == "user" && Globals.password == "user1234") {
+            Globals.loginState = true
+            Globals.userRole = "User"
+            println("")
+            println("Login Success!")
+            initializeMainMenu()
+        } else {
+            println("Login Failed! Incorrect Username/Password!")
+            println("")
 
-    if (username == "admin" && password == "admin1234") {
-        loginState = true
-        userRole = "Administrator"
-        println("")
-        println("Login Success!")
-        break
-    } else if (username == "user" && password == "user1234") {
-        loginState = true
-        userRole = "User"
-    } else {
-        println("Login Failed! Incorrect Username/Password!")
-        println("")
+            Globals.loginState = false
 
-        loginState = false
+            print("Username: ")
+            username = System.in.newReader().readLine()
+            print("Password: ")
+            password = System.in.newReader().readLine()
 
-        print("Username: ")
-        username = System.in.newReader().readLine()
-        print("Password: ")
-        password = System.in.newReader().readLine()
+        }
 
     }
 
 }
 
 
-println("")
+void initializeMainMenu() {
+    println("")
+    println("---Main Menu---")
 
-println("---Main Menu---")
+    println("1. Search Restaurants")
+    println("2. View Restaurant List")
+    println("3. View Location List")
+    println("4. Help")
+    println("5. Log out")
 
-println("1. Search Restaurants")
+    if (Globals.userRole == "Administrator") {
 
-println("2. View Restaurant List")
+        println("---Administrative Stuff---")
+        println("5. Add Restaurant")
+        println("6. Add Location")
+        println("7. Edit Restaurant")
+        println("8. Remove Restaurant")
+        println("9. Remove Location")
+        println("10. Add Category")
+        println("11. Remove Category")
 
-println("3. View Location List")
+    }
 
-println("4. Help")
+    println("")
 
-if (userRole == "Administrator") {
+    print("Selection: ")
 
-    println("---Administrative Stuff---")
-    println("5. Add Restaurant")
-    println("6. Add Location")
-    println("7. Edit Restaurant")
-    println("8. Remove Restaurant")
-    println("9. Remove Location")
-    println("10. Add Category")
-    println("11. Remove Category")
+    Globals.optionSelected = System.in.newReader().readLine()
 
-}
+    switch (Globals.userRole) { // Checking user privileges
 
-println("")
+        case "Administrator":
+            switch (Globals.optionSelected) {
+                case "5":
+                    AddRestaurant()
+                    break
+                case "6":
+                    AddLocation()
+                    break
+                case "7":
+                    EditRestaurant()
+                    break
+                case "8":
+                    RemoveRestaurant()
+                    break
+                case "9":
+                    RemoveLocation()
+                    break
 
-print("Selection: ")
+            }
 
-optionSelected = System.in.newReader().readLine()
+        default: // User for default case
+            switch (Globals.optionSelected) {
+                case "1":
+                    break
+                case "2":
+                    break
+                case "3":
+                    break
+                case "4":
+                    break
+                case "5":
+                    if (Globals.loginState) {
 
-switch (userRole) { // Checking user privileges
+                        Globals.username = ""
+                        Globals.password = ""
+                        Globals.userRole = ""
+                        println("Log out successful!")
+                        println("")
 
-    case "Administrator":
-        switch (optionSelected) {
-            case "5":
-                AddRestaurant()
-                break
-            case "6":
-                AddLocation()
-                break
-            case "7":
-                EditRestaurant()
-                break
-            case "8":
-                RemoveRestaurant()
-                break
-            case "9":
-                RemoveLocation()
-                break
+                        restoLogin()
+                    }
+                    break
 
-        }
+            }
+            break
 
-    default: // User for default case
-        switch (optionSelected) {
-            case "1":
-                break
-
-        }
-        break
+    }
 
 }
 
@@ -133,12 +162,11 @@ void AddRestaurant() {
     def restoName
     def restoLocation
     def restoCategory
+    def restoPrice
 
     println("--Add Restaurant--")
     print("Name: ")
     restoName = System.in.newReader().readLine()
-    Globals.restaurantList.add(restoName)
-    println(Globals.restaurantList.get(0))
 
     print("Location: ")
     restoLocation = System.in.newReader().readLine()
@@ -149,6 +177,11 @@ void AddRestaurant() {
 
         if (restoCategory in Globals.categoryList) {
             println("Successfully added restaurant to the list!")
+
+            // Add data to their respective list array
+            Globals.restaurantList.add([Globals.restoCount][0], restoName)
+            Globals.restaurantList.add([Globals.restoCount][0], restoLocation)
+            Globals.restaurantList.add([Globals.restoCount][0], restoCategory)
 
         }
 
