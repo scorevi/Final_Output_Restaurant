@@ -38,13 +38,14 @@ void restoLogin() { // a.k.a Main Method
             println("")
             println("Login Success!")
             initializeMainMenu()
-            break
+
         } else if (Globals.username == "user" && Globals.password == "user1234") {
             Globals.loginState = true
             Globals.userRole = "User"
             println("")
             println("Login Success!")
             initializeMainMenu()
+
         } else {
             println("Login Failed! Incorrect Username/Password!")
             println("")
@@ -52,9 +53,9 @@ void restoLogin() { // a.k.a Main Method
             Globals.loginState = false
 
             print("Username: ")
-            username = System.in.newReader().readLine()
+            Globals.username = System.in.newReader().readLine()
             print("Password: ")
-            password = System.in.newReader().readLine()
+            Globals.password = System.in.newReader().readLine()
 
         }
 
