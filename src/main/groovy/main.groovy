@@ -74,16 +74,18 @@ void initializeMainMenu() {
     println("4. Help")
     println("5. Log out")
 
+    println("")
+
     if (Globals.userRole == "Administrator") {
 
         println("---Administrative Stuff---")
-        println("5. Add Restaurant")
-        println("6. Add Location")
-        println("7. Edit Restaurant")
-        println("8. Remove Restaurant")
-        println("9. Remove Location")
-        println("10. Add Category")
-        println("11. Remove Category")
+        println("6. Add Restaurant")
+        println("7. Add Location")
+        println("8. Edit Restaurant")
+        println("9. Remove Restaurant")
+        println("10. Remove Location")
+        println("11. Add Category")
+        println("12. Remove Category")
 
     }
 
@@ -97,20 +99,26 @@ void initializeMainMenu() {
 
         case "Administrator":
             switch (Globals.optionSelected) {
-                case "5":
+                case "6":
                     AddRestaurant()
                     break
-                case "6":
+                case "7":
                     AddLocation()
                     break
-                case "7":
+                case "8":
                     EditRestaurant()
                     break
-                case "8":
+                case "9":
                     RemoveRestaurant()
                     break
-                case "9":
+                case "10":
                     RemoveLocation()
+                    break
+                case "11":
+                    AddCategory()
+                    break
+                case "12":
+                    RemoveCategory()
                     break
 
             }
@@ -128,11 +136,14 @@ void initializeMainMenu() {
                 case "5":
                     if (Globals.loginState) {
 
+                        Globals.loginState = false
                         Globals.username = ""
                         Globals.password = ""
                         Globals.userRole = ""
+
                         println("Log out successful!")
                         println("")
+
 
                         restoLogin()
                     }
@@ -164,6 +175,7 @@ void AddRestaurant() {
     def restoLocation
     def restoCategory
     def restoPrice
+    boolean restoActionFinished = false
 
     println("--Add Restaurant--")
     print("Name: ")
@@ -171,22 +183,54 @@ void AddRestaurant() {
 
     print("Location: ")
     restoLocation = System.in.newReader().readLine()
+    while (!restoActionFinished) {
 
-    if (restoLocation in Globals.locationList) {
-        print("Category: ")
-        restoCategory = System.in.newReader().readLine()
+        if (restoLocation in Globals.locationList) {
+            print("Category: ")
+            restoCategory = System.in.newReader().readLine()
 
-        if (restoCategory in Globals.categoryList) {
-            println("Successfully added restaurant to the list!")
+            while (!restoActionFinished) {
 
-            // Add data to their respective list array
-            Globals.restaurantList.add([Globals.restoCount][0], restoName)
-            Globals.restaurantList.add([Globals.restoCount][0], restoLocation)
-            Globals.restaurantList.add([Globals.restoCount][0], restoCategory)
+                if (restoCategory in Globals.categoryList) {
+                    println("Successfully added restaurant to the list!")
+
+                    // Add data to their respective list array
+                    Globals.restaurantList.add([Globals.restoCount][0], restoName)
+                    Globals.restaurantList.add([Globals.restoCount][0], restoLocation)
+                    Globals.restaurantList.add([Globals.restoCount][0], restoCategory)
+                    restoActionFinished = true
+                    sleep(5000)
+                    initializeMainMenu()
+
+                } else {
+                    println("Category not found in the restaurant category list. Please try again!")
+                    println("")
+                    println("List of valid restaurant categories: ")
+                    for (item in Globals.categoryList) {
+                        println(item)
+                    }
+                    println("")
+                    print("Category: ")
+                    restoCategory = System.in.newReader().readLine()
+                }
+
+            }
+
+        } else {
+            println("Location not found in the location list. Please try again!")
+            println("")
+            println("List of valid locations: ")
+            for (item in Globals.locationList) {
+                println(item)
+            }
+            println("")
+            print("Location: ")
+            restoLocation = System.in.newReader().readLine()
 
         }
 
     }
+
 
 }
 
