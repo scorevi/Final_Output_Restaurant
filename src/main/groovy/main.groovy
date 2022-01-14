@@ -73,19 +73,20 @@ void initializeMainMenu() {
     println("3. View Location List")
     println("4. Help")
     println("5. Log out")
+    println("6. Exit")
 
     println("")
 
     if (Globals.userRole == "Administrator") {
 
         println("---Administrative Stuff---")
-        println("6. Add Restaurant")
-        println("7. Add Location")
-        println("8. Edit Restaurant")
-        println("9. Remove Restaurant")
-        println("10. Remove Location")
-        println("11. Add Category")
-        println("12. Remove Category")
+        println("7. Add Restaurant")
+        println("8. Add Location")
+        println("9. Edit Restaurant")
+        println("10. Remove Restaurant")
+        println("11. Remove Location")
+        println("12. Add Category")
+        println("13. Remove Category")
 
     }
 
@@ -99,25 +100,25 @@ void initializeMainMenu() {
 
         case "Administrator":
             switch (Globals.optionSelected) {
-                case "6":
+                case "7":
                     AddRestaurant()
                     break
-                case "7":
+                case "8":
                     AddLocation()
                     break
-                case "8":
+                case "9":
                     EditRestaurant()
                     break
-                case "9":
+                case "10":
                     RemoveRestaurant()
                     break
-                case "10":
+                case "11":
                     RemoveLocation()
                     break
-                case "11":
+                case "12":
                     AddCategory()
                     break
-                case "12":
+                case "13":
                     RemoveCategory()
                     break
 
@@ -130,6 +131,7 @@ void initializeMainMenu() {
                 case "2":
                     break
                 case "3":
+                    ViewListFunc()
                     break
                 case "4":
                     break
@@ -148,6 +150,12 @@ void initializeMainMenu() {
                         restoLogin()
                     }
                     break
+                case "6":
+                    System.exit(0)
+                    break
+                default:
+                    initializeMainMenu()
+                    break
 
             }
             break
@@ -165,6 +173,27 @@ void SearchRestaurants() {
 }
 
 void ViewListFunc() { // View restaurants and locations
+    def userResponse
+
+    println("")
+    println("Restaurant Locations: ")
+    for (item in Globals.locationList) {
+        println(item)
+    }
+
+    println("")
+    println("1. Go back")
+    print("Selection: ")
+    userResponse = System.in.newReader().readLine()
+
+    switch (userResponse) {
+        case "1":
+            initializeMainMenu()
+            break
+        default:
+            ViewListFunc()
+            break
+    }
 
 }
 
@@ -174,7 +203,7 @@ void AddRestaurant() {
     def restoName
     def restoLocation
     def restoCategory
-    def restoPrice
+    def restoAddress
     boolean restoActionFinished = false
 
     println("--Add Restaurant--")
@@ -195,9 +224,10 @@ void AddRestaurant() {
                     println("Successfully added restaurant to the list!")
 
                     // Add data to their respective list array
-                    Globals.restaurantList.add([Globals.restoCount][0], restoName)
-                    Globals.restaurantList.add([Globals.restoCount][0], restoLocation)
-                    Globals.restaurantList.add([Globals.restoCount][0], restoCategory)
+                    Globals.restaurantList.add([Globals.restoCount][0], restoName) // index 0
+                    Globals.restaurantList.add([Globals.restoCount][0], restoLocation) // index 1
+                    Globals.restaurantList.add([Globals.restoCount][0], restoCategory) // index 2
+                    Globals.restaurantList.add([Globals.restoCount][0], restoAddress) // index 3
                     restoActionFinished = true
                     sleep(5000)
                     initializeMainMenu()
@@ -235,6 +265,25 @@ void AddRestaurant() {
 }
 
 void AddLocation() {
+    def restoLocationName
+    def restoActionFinished
+
+    println("--Add Location--")
+    print("Location: ")
+    restoLocationName = System.in.newReader().readLine()
+
+    while (!restoActionFinished) {
+        if (restoLocationName.isBlank()) {
+            println("Invalid input! You entered nothing, please try again!")
+            print("Location: ")
+            restoLocationName = System.in.newReader().readLine()
+        } else {
+            restoActionFinished = true
+            Globals.locationList.add(restoLocationName)
+            println("Successfully added location!")
+            sleep(5000)
+        }
+    }
 
 }
 
