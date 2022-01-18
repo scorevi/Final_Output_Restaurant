@@ -1,3 +1,4 @@
+import java.io.File
 class Globals {
     static List restoNameList = []
     static List locationList = ["Balintawak", "Kamuning", "Quezon Ave."]
@@ -6,11 +7,11 @@ class Globals {
 
     static def restoCount = 0
 
-    static def username
-    static def password
-    static def userRole
-    static def loginState = false
-    static def optionSelected
+    static def username // input user
+    static def password // input password
+    static def userRole // determining user's privileges
+    static def loginState = false // if user's logged in or out
+    static def optionSelected // determining index of selected choices
 
 }
 
@@ -65,34 +66,35 @@ void restoLogin() { // a.k.a Main Method
 
 
 void initializeMainMenu() {
+    println("Checking files...")
     println("")
     println("---Main Menu---")
 
-    println("1. Search Restaurants")
-    println("2. View Restaurant List")
-    println("3. View Location List")
-    println("4. Help")
-    println("5. Log out")
-    println("6. Exit")
+    println("1. Search Restaurants") // Member 1 - Sean
+    println("2. View Restaurant List") // Member 1 - Sean
+    println("3. View Location List") // Member 1 - Sean
+    println("4. Help") // Member 1 - Sean
+    println("5. Log out") // Member 1 - Sean
+    println("6. Exit") // Member 1 - Sean
 
     println("")
 
     if (Globals.userRole == "Administrator") {
 
         println("---Administrative Stuff---")
-        println("7. Add Restaurant")
-        println("8. Add Location")
-        println("9. Edit Restaurant")
-        println("10. Remove Restaurant")
-        println("11. Remove Location")
-        println("12. Add Category")
-        println("13. Remove Category")
+        println("7. Add Restaurant") // Member 1 - Sean
+        println("8. Add Location") // Member 2
+        println("9. Edit Restaurant") // Member 1 - Sean
+        println("10. Remove Restaurant") // Member 1 - Sean
+        println("11. Remove Location") // Member 2 - Pat
+        println("12. Add Category") // Member 2 - Pat
+        println("13. Remove Category") // Member 2 - Pat
 
     }
 
     println("")
 
-    print("Selection: ")
+    print("Number selection: ")
 
     Globals.optionSelected = System.in.newReader().readLine()
 
