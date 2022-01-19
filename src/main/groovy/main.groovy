@@ -1,11 +1,5 @@
 class Globals {
-    static List restoNameList = []
-    static List locationList = ["Balintawak", "Kamuning", "Quezon Ave."]
-    static List categoryList = ["Fine Dining", "Fast Food", "Desserts"]
-    static List restaurantList = [][]
-
-    static def restoCount = 0
-
+    
     static def username // input user
     static def password // input password
     static def userRole // determining user's privileges
