@@ -1,4 +1,3 @@
-import java.io.File
 class Globals {
     static List restoNameList = []
     static List locationList = ["Balintawak", "Kamuning", "Quezon Ave."]
@@ -18,14 +17,22 @@ class Globals {
 restoLogin()
 
 void restoLogin() { // a.k.a Main Method
-    File restoFile_Category = new File(System.getProperty("user.home") + '/categories.txt')
-    File restoFile_Location = new File(System.getProperty("user.home") + '/locations.txt')
-    File restoFile_Restaurants = new File(System.getProperty("user.home") + '/restaurants.txt')
+    File restoFolder = new File(System.getProperty("user.home") + '/RestoFinder')
+    File restoFile_Category = new File(System.getProperty("user.home") + '/RestoFinder/categories.txt')
+    File restoFile_Location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt')
+    File restoFile_Restaurants = new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
 
-    println("Getting user directory, please wait...")
+
+    println("Getting home directory, please wait...")
     println(System.getProperty("user.home"))
 
     println("Checking required files, please wait...")
+    if (restoFolder.exists()) {
+        println("Folder 'RestoFinder' found!")
+    } else {
+        println("Folder 'RestoFinder' does not exist, creating new folder...")
+        restoFolder.mkdir()
+    }
     if (restoFile_Category.exists()) {
         println('File categories.txt found!')
     } else {
@@ -48,7 +55,7 @@ void restoLogin() { // a.k.a Main Method
         println('File restaurants.txt created successfully!')
     }
 
-
+    println("")
     println("Login to RestoFinder")
 
     print("Username: ")
@@ -96,6 +103,7 @@ void restoLogin() { // a.k.a Main Method
 
 
 void initializeMainMenu() {
+    println("")
     println("---Main Menu---")
     println("Type the number of an option to continue.")
 
@@ -113,12 +121,11 @@ void initializeMainMenu() {
         println("---Administrative Stuff---")
         println("7. Add Restaurant") // Member 1 - Sean (FINISHED)
         println("8. Add Location") // Member 2 - Pat (STATUS UNKNOWN)
-        println("9. Edit Restaurant") // Member 1 - Sean (FINISHED)
-        println("10. Remove Restaurant") // Member 1 - Sean (FINISHED)
+        println("9. Remove Restaurant") // Member 1 - Sean (FINISHED)
 
-        println("11. Remove Location") // Member 2 - Pat (STATUS UNKNOWN)
-        println("12. Add Category") // Member 2 - Pat (STATUS UNKNOWN)
-        println("13. Remove Category") // Member 2 - Pat (STATUS UNKNOWN)
+        println("10. Remove Location") // Member 2 - Pat (STATUS UNKNOWN)
+        println("11. Add Category") // Member 2 - Pat (STATUS UNKNOWN)
+        println("12. Remove Category") // Member 2 - Pat (STATUS UNKNOWN)
 
     }
 
@@ -139,18 +146,15 @@ void initializeMainMenu() {
                     AddLocation()
                     break
                 case "9":
-                    EditRestaurant()
-                    break
-                case "10":
                     RemoveRestaurant()
                     break
-                case "11":
+                case "10":
                     RemoveLocation()
                     break
-                case "12":
+                case "11":
                     AddCategory()
                     break
-                case "13":
+                case "12":
                     RemoveCategory()
                     break
 
@@ -163,7 +167,7 @@ void initializeMainMenu() {
                 case "2":
                     break
                 case "3":
-                    ViewListFunc()
+                    ViewLocListFunc()
                     break
                 case "4":
                     break
@@ -206,13 +210,14 @@ void SearchRestaurants() {
 
 }
 
-void ViewListFunc() { // View restaurants and locations
+void ViewLocListFunc() { // View restaurant locations
     def userResponse
-
+    def lines_location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt').text
     println("")
     println("Restaurant Locations: ")
-    for (item in Globals.locationList) {
-        println(item)
+
+    lines_location.eachLine { line ->
+        println(line)
     }
 
     println("")
@@ -225,7 +230,7 @@ void ViewListFunc() { // View restaurants and locations
             initializeMainMenu()
             break
         default:
-            ViewListFunc()
+            ViewLocListFunc()
             break
     }
 
@@ -248,25 +253,41 @@ void AddRestaurant() {
 
     restoLocation = System.in.newReader().readLine()
     while (!restoActionFinished) {
-        def lines_location = new File('locations.txt').text
+
+        def lines_location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt').text
+
         if (lines_location.contains(restoLocation)) {
             print("Category: ")
             restoCategory = System.in.newReader().readLine()
 
             while (!restoActionFinished) {
-                def lines_category = new File('categories.txt').text
+                def lines_category = new File(System.getProperty("user.home") + '/RestoFinder/categories.txt').text
 
                 if (lines_category.contains(restoCategory)) {
 
-                    // Add data to their respective files
-                    new File('restaurants.txt').withWriter('utf-8') {
-                        writer -> writer.writeLine(restoName + ' - ' + restoLocation + ' - ' + restoCategory + ' - ' + restoAddress)
+                    print("Address: ")
+                    restoAddress = System.in.newReader().readLine()
+                    while (!restoActionFinished) {
+                        if (!restoAddress.isAllWhitespace()) {
+
+                            // Add data to their respective files
+                            new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt').withWriter('utf-8') {
+                                writer -> writer.writeLine(restoName + ' - ' + restoLocation + ' - ' + restoCategory + ' - ' + restoAddress)
+                            }
+
+                            restoActionFinished = true
+                            println("Successfully added restaurant to the list!")
+                            sleep(5000)
+                            initializeMainMenu()
+
+                        } else {
+                            println("Address field cannot be empty, please try again!")
+                            println("")
+                            print("Address: ")
+                            restoAddress = System.in.newReader().readLine()
+                        }
                     }
 
-                    restoActionFinished = true
-                    println("Successfully added restaurant to the list!")
-                    sleep(5000)
-                    initializeMainMenu()
 
                 } else {
                     println("Category not found in the restaurant category file. Please try again!")
@@ -305,6 +326,7 @@ void AddRestaurant() {
 void AddLocation() { // just add file operations here
     def restoLocationName
     def restoActionFinished
+    def lines_location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt').text
 
     println("--Add Location--")
     print("Location: ")
@@ -316,18 +338,21 @@ void AddLocation() { // just add file operations here
             print("Location: ")
             restoLocationName = System.in.newReader().readLine()
         } else {
+            if (lines_location.contains(restoLocationName)) {
+                println("This location name already exists on the file, please try again!")
+                print("Location: ")
+                restoLocationName = System.in.newReader().readLine()
+            }
             restoActionFinished = true
-            Globals.locationList.add(restoLocationName)
-            println("Successfully added location!")
+            new File(System.getProperty("user.home") + '/RestoFinder/locations.txt').append(restoLocationName + '\n')
+            println("Successfully added '" + restoLocationName + "' location!")
             sleep(5000)
+            initializeMainMenu()
         }
     }
 
 }
 
-void EditRestaurant() {
-
-}
 
 void RemoveRestaurant() {
 
