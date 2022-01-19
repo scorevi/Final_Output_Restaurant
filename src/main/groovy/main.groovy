@@ -69,32 +69,34 @@ void initializeMainMenu() {
     println("Checking files...")
     println("")
     println("---Main Menu---")
+    println("Type the number of an option to continue.")
 
-    println("1. Search Restaurants") // Member 1 - Sean
-    println("2. View Restaurant List") // Member 1 - Sean
-    println("3. View Location List") // Member 1 - Sean
-    println("4. Help") // Member 1 - Sean
-    println("5. Log out") // Member 1 - Sean
-    println("6. Exit") // Member 1 - Sean
+    println("1. Search Restaurants") // Member 1 - Sean (ONGOING)
+    println("2. View Restaurant List") // Member 1 - Sean (FINISHED)
+    println("3. View Location List") // Member 1 - Sean (FINISHED)
+    println("4. Help") // Member 1 - Sean (FINISHED)
+    println("5. Log out") // Member 1 - Sean (FINISHED)
+    println("6. Exit") // Member 1 - Sean (FINISHED)
 
     println("")
 
     if (Globals.userRole == "Administrator") {
 
         println("---Administrative Stuff---")
-        println("7. Add Restaurant") // Member 1 - Sean
-        println("8. Add Location") // Member 2
-        println("9. Edit Restaurant") // Member 1 - Sean
-        println("10. Remove Restaurant") // Member 1 - Sean
-        println("11. Remove Location") // Member 2 - Pat
-        println("12. Add Category") // Member 2 - Pat
-        println("13. Remove Category") // Member 2 - Pat
+        println("7. Add Restaurant") // Member 1 - Sean (FINISHED)
+        println("8. Add Location") // Member 2 - Pat (STATUS UNKNOWN)
+        println("9. Edit Restaurant") // Member 1 - Sean (FINISHED)
+        println("10. Remove Restaurant") // Member 1 - Sean (FINISHED)
+
+        println("11. Remove Location") // Member 2 - Pat (STATUS UNKNOWN)
+        println("12. Add Category") // Member 2 - Pat (STATUS UNKNOWN)
+        println("13. Remove Category") // Member 2 - Pat (STATUS UNKNOWN)
 
     }
 
     println("")
 
-    print("Number selection: ")
+    print("Input: ")
 
     Globals.optionSelected = System.in.newReader().readLine()
 
@@ -215,27 +217,32 @@ void AddRestaurant() {
     print("Location: ")
     restoLocation = System.in.newReader().readLine()
     while (!restoActionFinished) {
-
-        if (restoLocation in Globals.locationList) {
+        def lines_location = new File('locations.txt').withReader('utf-8') {
+            reader -> reader.find(restoCategory)
+        }
+        if (lines_location.find(restoLocation)) {
             print("Category: ")
             restoCategory = System.in.newReader().readLine()
 
             while (!restoActionFinished) {
+                def lines_category = new File('categories.txt').withReader('utf-8') {
+                    reader -> reader.find(restoCategory)
+                }
 
-                if (restoCategory in Globals.categoryList) {
+                if (lines_category.find(restoCategory)) {
                     println("Successfully added restaurant to the list!")
 
-                    // Add data to their respective list array
-                    Globals.restaurantList.add([Globals.restoCount][0], restoName) // index 0
-                    Globals.restaurantList.add([Globals.restoCount][0], restoLocation) // index 1
-                    Globals.restaurantList.add([Globals.restoCount][0], restoCategory) // index 2
-                    Globals.restaurantList.add([Globals.restoCount][0], restoAddress) // index 3
+                    // Add data to their respective files
+                    new File('restaurants.txt').withWriter('utf-8') {
+                        writer -> writer.writeLine(restoName + ' - ' + restoLocation + ' - ' + restoCategory + ' - ' + restoAddress)
+                    }
+
                     restoActionFinished = true
                     sleep(5000)
                     initializeMainMenu()
 
                 } else {
-                    println("Category not found in the restaurant category list. Please try again!")
+                    println("Category not found in the restaurant category file. Please try again!")
                     println("")
                     println("List of valid restaurant categories: ")
                     for (item in Globals.categoryList) {
@@ -249,7 +256,7 @@ void AddRestaurant() {
             }
 
         } else {
-            println("Location not found in the location list. Please try again!")
+            println("Location not found in the location file. Please try again!")
             println("")
             println("List of valid locations: ")
             for (item in Globals.locationList) {
@@ -266,7 +273,7 @@ void AddRestaurant() {
 
 }
 
-void AddLocation() {
+void AddLocation() { // just add file operations here
     def restoLocationName
     def restoActionFinished
 
