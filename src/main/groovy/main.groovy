@@ -1,13 +1,5 @@
-class Globals {
-    
-    static def username // input user
-    static def password // input password
-    static def userRole // determining user's privileges
-    static def loginState = false // if user's logged in or out
-    static def optionSelected // determining index of selected choices
 
-}
-
+import Globals
 restoLogin()
 
 void restoLogin() { // a.k.a Main Method
@@ -98,7 +90,7 @@ void restoLogin() { // a.k.a Main Method
 
 void initializeMainMenu() {
     println("")
-    println("---Main Menu---")
+    println("---RestoFinder Main Menu---")
     println("Type the number of an option to continue.")
 
     println("1. Search Restaurants") // Member 1 - Sean (ONGOING)
@@ -201,7 +193,32 @@ void initializeMainMenu() {
 // User Functions ---
 
 void SearchRestaurants() {
+    def userLocation
+    def userSearchTypeInput
 
+    println("--Search Restaurants--")
+    println("Type the number of an option to continue.")
+    println("Notice: You may only pick 1 option for the time being.")
+    println("1. Name")
+    println("2. Category")
+    println("3. Location")
+    println("")
+
+    println("Search by: ")
+
+    switch (userSearchTypeInput) {
+        case "1":
+            println("Selected method: Name")
+            print("Type the name of the restaurant: ")
+
+            break
+        case "2":
+            break
+        case "3":
+            break
+        default:
+            break
+    }
 }
 
 void ViewLocListFunc() { // View restaurant locations
