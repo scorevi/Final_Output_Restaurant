@@ -367,6 +367,7 @@ void AddLocation() { // just add file operations here
 void RemoveRestaurant() {
     def userInput
     def oldFile = new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
+    def NewFile = new File(System.getProperty("user.home") + '/RestoFinder/restaurants-temp.txt')
 
     BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.home") + '/RestoFinder/restaurants.txt'))
     int linescount = 0
@@ -399,13 +400,26 @@ void RemoveRestaurant() {
 
     if (!userInput.isAllWhitespace()) {
         if (userInput.isNumber()) {
-
+            NewFile.createNewFile()
             def replacer = { File source, String toSearch, String replacement ->
                 source.write(source.text.replaceAll(toSearch, replacement))
-            } // Create clousure for removing lines
-            
-            replacer.call(oldFile, fileLines.get(userInput as int - 1), "") // Remove string
-            replacer.call(oldFile, '\\s+$', '') // Remove extra spaces
+            } // Create clousure for removing lines..
+
+            if (!(userInput as int).equals(linescount)) {
+
+                NewFile.withWriter { writer -> writer.write(oldFile.text) }
+                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
+                replacer.call(NewFile, '\\s+', '\n') // Remove extra spaces
+                oldFile.delete()
+                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
+
+            } else {
+                NewFile.withWriter { writer -> writer.write(oldFile.text) }
+                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
+                replacer.call(NewFile, '\\s+$', "") // Remove extra spaces
+                oldFile.delete()
+                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
+            }
 
 
             println("Remove operation successful, returning to main menu...")
