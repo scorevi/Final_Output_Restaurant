@@ -1,4 +1,4 @@
-import Globals
+// Global variables are located at 'Globals.groovy' file.
 restoLogin()
 
 void restoLogin() { // a.k.a Main Method
@@ -365,7 +365,71 @@ void AddLocation() { // just add file operations here
 
 
 void RemoveRestaurant() {
+    def userInput
+    def oldFile = new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
 
+    BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.home") + '/RestoFinder/restaurants.txt'))
+    int linescount = 0
+    List<String> fileLines = oldFile.readLines()
+
+    while (reader.readLine() != null) {
+        linescount++
+    }
+    reader.close();
+
+    println("Remove a restaurant to exclude from the search operation by typing its respective number.")
+    println("If you wish to stop the operation, simply type 'cancel'.")
+    println("")
+    if (oldFile.text.isAllWhitespace()) {
+        println("There's nothing here to show, returning to main menu...")
+        sleep(5000)
+        initializeMainMenu()
+    }
+
+    for (int i = 0; i < linescount; i++) { // Display restaurant list
+        def line = oldFile.readLines().get(i)
+        println((i + 1) + ". " + line)
+
+    }
+
+    println("")
+    print("Selection: ")
+
+    userInput = System.in.newReader().readLine()
+
+    if (!userInput.isAllWhitespace()) {
+        if (userInput.isNumber()) {
+
+            def replacer = { File source, String toSearch, String replacement ->
+                source.write(source.text.replaceAll(toSearch, replacement))
+            } // Create clousure for removing lines
+            
+            replacer.call(oldFile, fileLines.get(userInput as int - 1), "") // Remove string
+            replacer.call(oldFile, '\\s+$', '') // Remove extra spaces
+
+
+            println("Remove operation successful, returning to main menu...")
+            sleep(5000) // Wait 5 seconds
+            initializeMainMenu()
+
+        } else {
+            userInput.toLowerCase()
+            if (userInput.contains('cancel')) {
+                println("Remove operation canceled, returning to main menu...")
+                sleep(5000)
+
+                println("")
+                initializeMainMenu()
+            } else {
+                println("Invalid input, please try again!")
+                RemoveRestaurant()
+            }
+        }
+
+    } else {
+        println("Invalid input, please try again!")
+        RemoveRestaurant()
+    }
 }
 
 void RemoveLocation() {
