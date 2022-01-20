@@ -321,10 +321,10 @@ void ViewCategoryListFunc() { // View restaurant categories
 // --- Administrator Functions ---
 
 void AddRestaurant() {
-    def restoName
-    def restoLocation
-    def restoCategory
-    def restoAddress
+    String restoName
+    String restoLocation
+    String restoCategory
+    String restoAddress
     boolean restoActionFinished = false
 
     println("--Add Restaurant--")
@@ -336,16 +336,21 @@ void AddRestaurant() {
     restoLocation = System.in.newReader().readLine()
     while (!restoActionFinished) {
 
+        restoLocation = restoLocation.toLowerCase()
         def lines_location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt').text
+        String[] locationlines = lines_location.toLowerCase().split("\r\n")
+        boolean isLLFound = locationlines.any { restoLocation.contains(it) }
 
-        if (lines_location.contains(restoLocation)) {
+        if (isLLFound) {
             print("Category: ")
             restoCategory = System.in.newReader().readLine()
 
             while (!restoActionFinished) {
+                restoCategory = restoCategory.toLowerCase()
                 def lines_category = new File(System.getProperty("user.home") + '/RestoFinder/categories.txt').text
-
-                if (lines_category.contains(restoCategory)) {
+                String[] categorylines = lines_category.toLowerCase().split("\r\n")
+                boolean isCLFound = categorylines.any { restoCategory.contains(it) }
+                if (isCLFound) {
 
                     print("Address: ")
                     restoAddress = System.in.newReader().readLine()
