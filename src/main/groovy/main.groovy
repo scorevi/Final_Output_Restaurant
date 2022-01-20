@@ -1,14 +1,16 @@
 // Global variables are located at 'Globals.groovy' file.
+FileChecking()
 restoLogin()
 
-void restoLogin() { // a.k.a Main Method
+void FileChecking() {
+
     File restoFolder = new File(System.getProperty("user.home") + '/RestoFinder')
     File restoFile_Category = new File(System.getProperty("user.home") + '/RestoFinder/categories.txt')
     File restoFile_Location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt')
     File restoFile_Restaurants = new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
 
 
-    println("Getting home directory, please wait...")
+    println("Creating files on home directory, please wait...")
     println(System.getProperty("user.home"))
 
     println("Checking required files, please wait...")
@@ -40,6 +42,12 @@ void restoLogin() { // a.k.a Main Method
         println('File restaurants.txt created successfully!')
     }
 
+}
+
+
+void restoLogin() { // a.k.a Main Method
+
+
     println("")
     println("Login to RestoFinder")
 
@@ -55,14 +63,14 @@ void restoLogin() { // a.k.a Main Method
     while (!Globals.loginState) {
 
 
-        if (Globals.username == "admin" && Globals.password == "admin1234") {
+        if (Globals.username == "admin" && Globals.password == "admin") {
             Globals.loginState = true
             Globals.userRole = "Administrator"
             println("")
             println("Login Success!")
             initializeMainMenu()
 
-        } else if (Globals.username == "user" && Globals.password == "user1234") {
+        } else if (Globals.username == "user" && Globals.password == "user") {
             Globals.loginState = true
             Globals.userRole = "User"
             println("")
@@ -88,6 +96,7 @@ void restoLogin() { // a.k.a Main Method
 
 
 void initializeMainMenu() {
+
     println("")
     println("---RestoFinder Main Menu---")
     println("Type the number of an option to continue.")
@@ -148,6 +157,7 @@ void initializeMainMenu() {
         default: // User for default case
             switch (Globals.optionSelected) {
                 case "1":
+                    SearchRestaurants()
                     break
                 case "2":
                     ViewCategoryListFunc()
@@ -193,32 +203,62 @@ void initializeMainMenu() {
 // User Functions ---
 
 void SearchRestaurants() {
-    def userLocation
-    def userSearchTypeInput
+    def userInput
+    def userInputCmd
 
     println("--Search Restaurants--")
+    println("Type the name of a location, restaurant or category to search. If you want to cancel, type 'exit program'.")
+    print("Search: ")
+    userInput = System.in.newReader().readLine()
+    userInput.toLowerCase()
+    def locFile = new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
+    List<String> fileLines = locFile.readLines()
+
+    if (locFile.text.toLowerCase().contains(userInput.toLowerCase())) {
+
+        println("Name - Location - Category - Address")
+        println("")
+        BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.home") + '/RestoFinder/restaurants.txt'))
+        int linescount = 0
+
+        while (reader.readLine() != null) {
+            if (locFile.text.toLowerCase().contains(userInput.toLowerCase())) {
+                linescount++
+            }
+
+        }
+        reader.close();
+
+        for (int i = 0; i < linescount; i++) { // Display restaurant list
+
+            if (locFile.text.toLowerCase().contains(userInput.toLowerCase())) {
+                def line = locFile.readLines().get(i)
+                println((i + 1) + ". " + line)
+            }
+        }
+    } else if (userInput.contains("exit program")) {
+        println("Returning to main menu...")
+        sleep(2000)
+        initializeMainMenu()
+    } else {
+        println("Found nothing.")
+    }
+
+    println("")
+    println("---Actions---")
+    println("1. Return to menu")
     println("Type the number of an option to continue.")
-    println("Notice: You may only pick 1 option for the time being.")
-    println("1. Name")
-    println("2. Category")
-    println("3. Location")
     println("")
 
-    println("Search by: ")
+    print("Selection: ")
+    userInputCmd = System.in.newReader().readLine()
 
-    switch (userSearchTypeInput) {
+    switch (userInputCmd) {
         case "1":
-            println("Selected method: Name")
-            print("Type the name of the restaurant: ")
-
-            break
-        case "2":
-            break
-        case "3":
-            break
-        default:
+            initializeMainMenu()
             break
     }
+
 }
 
 void ViewLocListFunc() { // View restaurant locations
@@ -232,6 +272,7 @@ void ViewLocListFunc() { // View restaurant locations
     }
 
     println("")
+    println("---Actions---")
     println("1. Go back")
     println("Type the number of an option to continue.")
     print("Selection: ")
@@ -259,6 +300,7 @@ void ViewCategoryListFunc() { // View restaurant categories
     }
 
     println("")
+    println("---Actions---")
     println("1. Go back")
     println("Type the number of an option to continue.")
     print("Selection: ")
