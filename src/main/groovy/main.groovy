@@ -401,28 +401,34 @@ void RemoveRestaurant() {
     if (!userInput.isAllWhitespace()) {
         if (userInput.isNumber()) {
             NewFile.createNewFile()
+
             def replacer = { File source, String toSearch, String replacement ->
                 source.write(source.text.replaceAll(toSearch, replacement))
             } // Create clousure for removing lines..
 
-            if (!(userInput as int).equals(linescount)) {
-
+            if ((userInput as int).equals(1)) {
                 NewFile.withWriter { writer -> writer.write(oldFile.text) }
                 replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\s+', '\n') // Remove extra spaces
+                replacer.call(NewFile, '\\s', '') // Remove extra spaces
                 oldFile.delete()
                 NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
-
+            } else if ((userInput as int).equals(linescount)) {
+                NewFile.withWriter { writer -> writer.write(oldFile.text) }
+                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
+                replacer.call(NewFile, '\\s+$', '') // Remove extra spaces
+                oldFile.delete()
+                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
             } else {
                 NewFile.withWriter { writer -> writer.write(oldFile.text) }
                 replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\s+$', "") // Remove extra spaces
+                replacer.call(NewFile, '\\s+', '\n') // Remove extra spaces
                 oldFile.delete()
                 NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
             }
 
 
             println("Remove operation successful, returning to main menu...")
+            NewFile.delete()
             sleep(5000) // Wait 5 seconds
             initializeMainMenu()
 
