@@ -203,7 +203,7 @@ void initializeMainMenu() {
 // User Functions ---
 
 void SearchRestaurants() {
-    def userInput
+    String userInput
     def userInputCmd
 
     println("--Search Restaurants--")
