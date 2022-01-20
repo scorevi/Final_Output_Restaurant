@@ -93,7 +93,7 @@ void initializeMainMenu() {
     println("Type the number of an option to continue.")
 
     println("1. Search Restaurants") // Member 1 - Sean (ONGOING)
-    println("2. View Restaurant List") // Member 1 - Sean (FINISHED)
+    println("2. View Category List") // Member 1 - Sean (FINISHED)
     println("3. View Location List") // Member 1 - Sean (FINISHED)
     println("4. Help") // Member 1 - Sean (FINISHED)
     println("5. Log out") // Member 1 - Sean (FINISHED)
@@ -105,7 +105,7 @@ void initializeMainMenu() {
 
         println("---Administrative Stuff---")
         println("7. Add Restaurant") // Member 1 - Sean (FINISHED)
-        println("8. Add Location") // Member 2 - Pat (STATUS UNKNOWN)
+        println("8. Add Location") // Member 2 - Sean (FINISHED)
         println("9. Remove Restaurant") // Member 1 - Sean (FINISHED)
 
         println("10. Remove Location") // Member 2 - Pat (STATUS UNKNOWN)
@@ -150,6 +150,7 @@ void initializeMainMenu() {
                 case "1":
                     break
                 case "2":
+                    ViewCategoryListFunc()
                     break
                 case "3":
                     ViewLocListFunc()
@@ -232,6 +233,7 @@ void ViewLocListFunc() { // View restaurant locations
 
     println("")
     println("1. Go back")
+    println("Type the number of an option to continue.")
     print("Selection: ")
     userResponse = System.in.newReader().readLine()
 
@@ -246,7 +248,35 @@ void ViewLocListFunc() { // View restaurant locations
 
 }
 
-// Administrator Functions ---
+void ViewCategoryListFunc() { // View restaurant categories
+    def userResponse
+    def lines_category = new File(System.getProperty("user.home") + '/RestoFinder/categories.txt').text
+    println("")
+    println("Restaurant Categories: ")
+
+    lines_category.eachLine { line ->
+        println(line)
+    }
+
+    println("")
+    println("1. Go back")
+    println("Type the number of an option to continue.")
+    print("Selection: ")
+    userResponse = System.in.newReader().readLine()
+
+    switch (userResponse) {
+        case "1":
+            initializeMainMenu()
+            break
+        default:
+            ViewCategoryListFunc()
+            break
+    }
+
+}
+
+
+// --- Administrator Functions ---
 
 void AddRestaurant() {
     def restoName
