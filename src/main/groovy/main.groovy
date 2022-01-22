@@ -206,8 +206,6 @@ void initializeMainMenu() {
 
 }
 
-// Methods //
-
 // User Functions ---
 
 void SearchRestaurants() {
