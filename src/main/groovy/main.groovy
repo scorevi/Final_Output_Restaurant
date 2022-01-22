@@ -557,18 +557,21 @@ void RemoveRestaurant() {
             if ((userInput as int).equals(1)) {
                 NewFile.withWriter { writer -> writer.write(oldFile.text) }
                 replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
+                replacer.call(NewFile, '\\|', '') // Remove extra spaces
                 replacer.call(NewFile, '\\s', '') // Remove extra spaces
                 oldFile.delete()
                 NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
             } else if ((userInput as int).equals(linescount)) {
                 NewFile.withWriter { writer -> writer.write(oldFile.text) }
                 replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
+                replacer.call(NewFile, '\\|', '') // Remove extra spaces
                 replacer.call(NewFile, '\\s+$', '') // Remove extra spaces
                 oldFile.delete()
                 NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
             } else {
                 NewFile.withWriter { writer -> writer.write(oldFile.text) }
                 replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
+                replacer.call(NewFile, '\\|', '') // Remove extra spaces
                 replacer.call(NewFile, '\\s+', '\n') // Remove extra spaces
                 oldFile.delete()
                 NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
