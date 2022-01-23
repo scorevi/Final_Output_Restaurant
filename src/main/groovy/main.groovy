@@ -23,9 +23,7 @@ void FileChecking() {
     File restoFile_Location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt')
     File restoFile_Restaurants = new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
 
-
-    println("Creating files on home directory, please wait...")
-    println(System.getProperty("user.home"))
+    println("Creating files on home directory (" + System.getProperty("user.home") + "), please wait...")
 
     println("Checking required files, please wait...")
     if (restoFolder.exists()) {
@@ -113,24 +111,23 @@ void initializeMainMenu() {
     println("---RestoFinder Main Menu---")
     println("Type the number of an option to continue.")
 
-    println("1. Search Restaurants") // Member 1 - Sean (ONGOING)
-    println("2. View Category List") // Member 1 - Sean (FINISHED)
-    println("3. View Location List") // Member 1 - Sean (FINISHED)
-    println("4. Log out") // Member 1 - Sean (FINISHED)
-    println("5. Exit") // Member 1 - Sean (FINISHED)
+    println("1. Search Restaurants")
+    println("2. View Category List")
+    println("3. View Location List")
+    println("4. Log out")
+    println("5. Exit")
 
     println("")
 
     if (Globals.userRole == "Administrator") {
 
         println("---Administrative Stuff---")
-        println("6. Add Restaurant") // Member 1 - Sean (FINISHED)
-        println("7. Add Location") // Member 2 - Sean (FINISHED)
-        println("8. Remove Restaurant") // Member 1 - Sean (FINISHED)
-
-        println("9. Remove Location") // Member 2 - Pat (STATUS UNKNOWN)
-        println("10. Add Category") // Member 2 - Pat (STATUS UNKNOWN)
-        println("11. Remove Category") // Member 2 - Pat (STATUS UNKNOWN)
+        println("6. Add Restaurant")
+        println("7. Add Location")
+        println("8. Add Category")
+        println("9. Remove Restaurant")
+        println("10. Remove Location")
+        println("11. Remove Category")
 
     }
 
@@ -151,13 +148,13 @@ void initializeMainMenu() {
                     AddLocation()
                     break
                 case "8":
-                    RemoveRestaurant()
+                    AddCategory()
                     break
                 case "9":
-                    RemoveLocation()
+                    RemoveRestaurant()
                     break
                 case "10":
-                    AddCategory()
+                    RemoveLocation()
                     break
                 case "11":
                     RemoveCategory()
@@ -215,7 +212,6 @@ void AddToFile(String filePath, String factorType) {
     def lines_factorType = new File(filePath)
     def lines_factorTypeText = lines_factorType.text
 
-
     println("--Add " + factorType + "--")
     print(factorType + ": ")
     restoTypeName = System.in.newReader().readLine()
@@ -227,20 +223,23 @@ void AddToFile(String filePath, String factorType) {
             restoTypeName = System.in.newReader().readLine()
             restoTypeName = restoTypeName.toLowerCase()
         } else {
-            String[] factorType_lines = lines_factorTypeText.toLowerCase().split("\r\n")
-            boolean isFTFound = factorType_lines.any { restoTypeName.contains(it) }
+            String[] factorType_lines = lines_factorTypeText.toLowerCase().split("\n")
+            boolean isFTFound = factorType_lines.any { restoTypeName.matches(it) }
 
             if (isFTFound) {
                 println("This " + factorType + " name already exists on the file, please try again!")
                 print(factorType + ": ")
                 restoTypeName = System.in.newReader().readLine()
                 restoTypeName = restoTypeName.toLowerCase()
+
+            } else {
+                restoActionFinished = true
+                lines_factorType.append(restoTypeName + '\n')
+                println("Successfully added '" + restoTypeName + "' " + factorType + "!")
+                sleep(5000)
+                initializeMainMenu()
             }
-            restoActionFinished = true
-            lines_factorType.append(restoTypeName + '\n')
-            println("Successfully added '" + restoTypeName + "' " + factorType + "!")
-            sleep(5000)
-            initializeMainMenu()
+
         }
     }
 }
@@ -316,7 +315,7 @@ void RemoveFromFile(String filePath, String tempFilePath, String factorType) {
 
 }
 
-// User Functions ---
+// M A I N  F U N C T I O N S
 
 void SearchRestaurants() {
     String userInput
@@ -514,7 +513,7 @@ void AddRestaurant() {
         restoLocation = restoLocation.toLowerCase()
         def lines_location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt').text
         String[] locationlines = lines_location.toLowerCase().split("\n")
-        boolean isLLFound = locationlines.any { restoLocation.contains(it) }
+        boolean isLLFound = locationlines.any { restoLocation.matches(it) }
 
         if (isLLFound) {
             print("Category: ")
@@ -524,7 +523,7 @@ void AddRestaurant() {
                 restoCategory = restoCategory.toLowerCase()
                 def lines_category = new File(System.getProperty("user.home") + '/RestoFinder/categories.txt').text
                 String[] categorylines = lines_category.toLowerCase().split("\n")
-                boolean isCLFound = categorylines.any { restoCategory.contains(it) }
+                boolean isCLFound = categorylines.any { restoCategory.matches(it) }
                 if (isCLFound) {
 
                     print("Address: ")
@@ -583,114 +582,26 @@ void AddRestaurant() {
     }
 
 
-}
+} // manual specific
 
 void AddLocation() { // just add file operations here
     AddToFile(System.getProperty("user.home") + '/RestoFinder/locations.txt', "Location")
 
-}
+} // automated
 
 void AddCategory() {
     AddToFile(System.getProperty("user.home") + '/RestoFinder/categories.txt', "Category")
-}
+} // automated
 
 void RemoveRestaurant() {
-    def userInput
-    def oldFile = new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
-    def NewFile = new File(System.getProperty("user.home") + '/RestoFinder/restaurants-temp.txt')
-
-    BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.home") + '/RestoFinder/restaurants.txt'))
-    int linescount = 0
-    List<String> fileLines = oldFile.readLines()
-
-    while (reader.readLine() != null) {
-        linescount++
-    }
-    reader.close();
-
-    println("Remove a restaurant to exclude from the search operation by typing its respective number.")
-    println("If you wish to stop the operation, simply type 'cancel'.")
-    println("")
-    if (oldFile.text.isAllWhitespace()) {
-        println("There's nothing here to show, returning to main menu...")
-        sleep(5000)
-        initializeMainMenu()
-    }
-
-    for (int i = 0; i < linescount; i++) { // Display restaurant list
-        def line = oldFile.readLines().get(i)
-        println((i + 1) + ". " + line)
-
-    }
-
-    println("")
-    print("Selection: ")
-
-    userInput = System.in.newReader().readLine()
-
-    if (!userInput.isAllWhitespace()) {
-        if (userInput.isNumber()) {
-            NewFile.createNewFile()
-
-            def replacer = { File source, String toSearch, String replacement ->
-                source.write(source.text.replaceAll(toSearch, replacement))
-            } // Create clousure for removing lines..
-
-            if ((userInput as int).equals(1)) {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\|', '') // Remove extra spaces
-                replacer.call(NewFile, '\\s', '') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
-            } else if ((userInput as int).equals(linescount)) {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\|', '') // Remove extra spaces
-                replacer.call(NewFile, '\\s+$', '') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
-            } else {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\|', '') // Remove extra spaces
-                replacer.call(NewFile, '\\s+', '\n') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/restaurants.txt')
-            }
-
-
-            println("Remove operation successful, returning to main menu...")
-            NewFile.delete()
-            sleep(5000) // Wait 5 seconds
-            initializeMainMenu()
-
-        } else {
-            userInput.toLowerCase()
-            if (userInput.contains('cancel')) {
-                println("Remove operation canceled, returning to main menu...")
-                sleep(5000)
-
-                println("")
-                initializeMainMenu()
-            } else {
-                println("Invalid input, please try again!")
-                RemoveRestaurant()
-            }
-        }
-
-    } else {
-        println("Invalid input, please try again!")
-        RemoveRestaurant()
-    }
+    RemoveFromFile(System.getProperty("user.home") + '/RestoFinder/restaurants.txt', System.getProperty("user.home") + '/RestoFinder/restaurants-temp.txt', "Restaurant")
 }
 
 void RemoveLocation() {
     RemoveFromFile(System.getProperty("user.home") + '/RestoFinder/locations.txt', System.getProperty("user.home") + '/RestoFinder/locations-temp.txt', "Location")
-}
-
+} // automated
 
 void RemoveCategory() {
     RemoveFromFile(System.getProperty("user.home") + '/RestoFinder/categories.txt', System.getProperty("user.home") + '/RestoFinder/categories-temp.txt', "Category")
-}
+} // automated
 //
