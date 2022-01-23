@@ -1,3 +1,5 @@
+import java.awt.Robot
+
 class Globals {
 
     static def username // input user
@@ -8,7 +10,7 @@ class Globals {
 
 }
 
-// Global variables are located at 'Globals.groovy' file.
+// Main Routines
 FileChecking()
 restoLogin()
 
@@ -55,7 +57,6 @@ void FileChecking() {
     }
 
 }
-
 
 void restoLogin() { // a.k.a Main Method
 
@@ -202,6 +203,115 @@ void initializeMainMenu() {
             }
             break
 
+    }
+
+}
+
+// B U I L D E R  F U N C T I O N S
+
+void AddToFile(String filePath, String factorType) {
+    def restoTypeName
+    def restoActionFinished
+    def lines_factorType = new File(filePath)
+    def lines_factorTypeText = lines_factorType.text
+
+
+    println("--Add " + factorType + "--")
+    print(factorType + ": ")
+    restoTypeName = System.in.newReader().readLine()
+    restoTypeName = restoTypeName.toLowerCase()
+    while (!restoActionFinished) {
+        if (restoTypeName.isBlank()) {
+            println("Invalid input! You entered nothing, please try again!")
+            print(factorType + ": ")
+            restoTypeName = System.in.newReader().readLine()
+            restoTypeName = restoTypeName.toLowerCase()
+        } else {
+            String[] factorType_lines = lines_factorTypeText.toLowerCase().split("\r\n")
+            boolean isFTFound = factorType_lines.any { restoTypeName.contains(it) }
+
+            if (isFTFound) {
+                println("This " + factorType + " name already exists on the file, please try again!")
+                print(factorType + ": ")
+                restoTypeName = System.in.newReader().readLine()
+                restoTypeName = restoTypeName.toLowerCase()
+            }
+            restoActionFinished = true
+            lines_factorType.append(restoTypeName + '\n')
+            println("Successfully added '" + restoTypeName + "' " + factorType + "!")
+            sleep(5000)
+            initializeMainMenu()
+        }
+    }
+}
+
+void RemoveFromFile(String filePath, String tempFilePath, String factorType) {
+
+    def userInput
+    def oldFile = new File(filePath)
+    def NewFile = new File(tempFilePath)
+
+    BufferedReader reader = new BufferedReader(new FileReader(filePath))
+    int linescount = 0
+    List<String> fileLines = oldFile.readLines()
+
+    while (reader.readLine() != null) {
+        linescount++
+    }
+    reader.close();
+
+    println("Remove a " + factorType + " to exclude from the search operation by typing its respective number.")
+    println("If you wish to stop the operation, simply type 'cancel'.")
+    println("")
+    if (oldFile.text.isAllWhitespace()) {
+        println("There's nothing here to show, returning to main menu...")
+        sleep(5000)
+        initializeMainMenu()
+    }
+
+    for (int i = 0; i < linescount; i++) { // Display FactorType List
+        def line = oldFile.readLines().get(i)
+        println((i + 1) + ". " + line)
+
+    }
+
+    println("")
+    print("Selection: ")
+
+    userInput = System.in.newReader().readLine()
+
+    if (!userInput.isAllWhitespace() && userInput.isNumber() && (userInput as int) <= linescount) {
+        NewFile.createNewFile()
+
+        def replacer = { File source, String toSearch, String replacement ->
+            source.write(source.text.replaceAll(toSearch, replacement))
+        } // Create clousure for removing lines..
+
+        NewFile.withWriter { writer ->
+            for (String str in fileLines) {
+                if (str.contains(fileLines.get(userInput as int - 1))) {
+                    continue
+                } else {
+                    writer.write(str + "\n")
+                }
+            }
+        }
+        oldFile.delete()
+        NewFile.renameTo(filePath)
+
+        println("Remove operation successful, returning to main menu...")
+        NewFile.delete()
+        sleep(5000) // Wait 5 seconds
+        initializeMainMenu()
+
+    } else if (userInput.contains('cancel')) {
+        println("Remove operation canceled, returning to main menu...")
+        sleep(5000) // Wait 5 seconds
+        println("")
+        initializeMainMenu()
+    } else {
+        println("Invalid input, please try again!")
+        RemoveFromFile(filePath, tempFilePath, factorType)
     }
 
 }
@@ -476,41 +586,13 @@ void AddRestaurant() {
 }
 
 void AddLocation() { // just add file operations here
-    def restoLocationName
-    def restoActionFinished
-    def lines_location = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt').text
-
-
-    println("--Add Location--")
-    print("Location: ")
-    restoLocationName = System.in.newReader().readLine()
-    restoLocationName = restoLocationName.toLowerCase()
-    while (!restoActionFinished) {
-        if (restoLocationName.isBlank()) {
-            println("Invalid input! You entered nothing, please try again!")
-            print("Location: ")
-            restoLocationName = System.in.newReader().readLine()
-            restoLocationName = restoLocationName.toLowerCase()
-        } else {
-            String[] locationlines = lines_location.toLowerCase().split("\r\n")
-            boolean isLLFound = locationlines.any { restoLocationName.contains(it) }
-
-            if (isLLFound) {
-                println("This location name already exists on the file, please try again!")
-                print("Location: ")
-                restoLocationName = System.in.newReader().readLine()
-                restoLocationName = restoLocationName.toLowerCase()
-            }
-            restoActionFinished = true
-            new File(System.getProperty("user.home") + '/RestoFinder/locations.txt').append(restoLocationName + '\n')
-            println("Successfully added '" + restoLocationName + "' location!")
-            sleep(5000)
-            initializeMainMenu()
-        }
-    }
+    AddToFile(System.getProperty("user.home") + '/RestoFinder/locations.txt', "Location")
 
 }
 
+void AddCategory() {
+    AddToFile(System.getProperty("user.home") + '/RestoFinder/categories.txt', "Category")
+}
 
 void RemoveRestaurant() {
     def userInput
@@ -604,214 +686,11 @@ void RemoveRestaurant() {
 }
 
 void RemoveLocation() {
-    def userInput
-    def oldFile = new File(System.getProperty("user.home") + '/RestoFinder/locations.txt')
-    def NewFile = new File(System.getProperty("user.home") + '/RestoFinder/locations-temp.txt')
-
-    BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.home") + '/RestoFinder/locations.txt'))
-    int linescount = 0
-    List<String> fileLines = oldFile.readLines()
-
-    while (reader.readLine() != null) {
-        linescount++
-    }
-    reader.close();
-
-    println("Remove a location to exclude from the search operation by typing its respective number.")
-    println("If you wish to stop the operation, simply type 'cancel'.")
-    println("")
-    if (oldFile.text.isAllWhitespace()) {
-        println("There's nothing here to show, returning to main menu...")
-        sleep(5000)
-        initializeMainMenu()
-    }
-
-    for (int i = 0; i < linescount; i++) { // Display restaurant list
-        def line = oldFile.readLines().get(i)
-        println((i + 1) + ". " + line)
-
-    }
-
-    println("")
-    print("Selection: ")
-
-    userInput = System.in.newReader().readLine()
-
-    if (!userInput.isAllWhitespace()) {
-        if (userInput.isNumber()) {
-            NewFile.createNewFile()
-
-            def replacer = { File source, String toSearch, String replacement ->
-                source.write(source.text.replaceAll(toSearch, replacement))
-            } // Create clousure for removing lines..
-
-            if ((userInput as int).equals(1)) {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\s', '') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/locations.txt')
-            } else if ((userInput as int).equals(linescount)) {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\s+$', '') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/locations.txt')
-            } else {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\s+', '\n') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/locations.txt')
-            }
-
-
-            println("Remove operation successful, returning to main menu...")
-            NewFile.delete()
-            sleep(5000) // Wait 5 seconds
-            initializeMainMenu()
-
-        } else {
-            userInput.toLowerCase()
-            if (userInput.contains('cancel')) {
-                println("Remove operation canceled, returning to main menu...")
-                sleep(5000)
-
-                println("")
-                initializeMainMenu()
-            } else {
-                println("Invalid input, please try again!")
-                RemoveLocation()
-            }
-        }
-
-    } else {
-        println("Invalid input, please try again!")
-        RemoveLocation()
-    }
+    RemoveFromFile(System.getProperty("user.home") + '/RestoFinder/locations.txt', System.getProperty("user.home") + '/RestoFinder/locations-temp.txt', "Location")
 }
 
-void AddCategory() {
-    String restoCategoryName
-    boolean restoActionFinished
-    def lines_category = new File(System.getProperty("user.home") + '/RestoFinder/categories.txt').text
-
-    println("--Add Category--")
-    print("Category: ")
-    restoCategoryName = System.in.newReader().readLine()
-    restoCategoryName = restoCategoryName.toLowerCase()
-    while (!restoActionFinished) {
-        if (restoCategoryName.isBlank()) {
-            println("Invalid input! You entered nothing, please try again!")
-            print("Category: ")
-            restoLocationName = System.in.newReader().readLine()
-            restoCategoryName = restoCategoryName.toLowerCase()
-        } else {
-            String[] categorylines = lines_category.toLowerCase().split("\r\n")
-            boolean isCLFound = categorylines.any { restoCategoryName.contains(it) }
-
-            if (isCLFound) {
-                println("This category name already exists on the file, please try again!")
-                print("Category: ")
-                restoCategoryName = System.in.newReader().readLine()
-                restoCategoryName = restoCategoryName.toLowerCase()
-            }
-            restoActionFinished = true
-            restoCategoryName = restoCategoryName.toLowerCase()
-            new File(System.getProperty("user.home") + '/RestoFinder/categories.txt').append(restoCategoryName + '\n')
-
-            println("Successfully added '" + restoCategoryName + "' category!")
-            sleep(5000)
-            initializeMainMenu()
-        }
-    }
-}
 
 void RemoveCategory() {
-    def userInput
-    def oldFile = new File(System.getProperty("user.home") + '/RestoFinder/categories.txt')
-    def NewFile = new File(System.getProperty("user.home") + '/RestoFinder/categories-temp.txt')
-
-    BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.home") + '/RestoFinder/categories.txt'))
-    int linescount = 0
-    List<String> fileLines = oldFile.readLines()
-
-    while (reader.readLine() != null) {
-        linescount++
-    }
-    reader.close();
-
-    println("Remove a category to exclude from the search operation by typing its respective number.")
-    println("If you wish to stop the operation, simply type 'cancel'.")
-    println("")
-    if (oldFile.text.isAllWhitespace()) {
-        println("There's nothing here to show, returning to main menu...")
-        sleep(5000)
-        initializeMainMenu()
-    }
-
-    for (int i = 0; i < linescount; i++) { // Display restaurant list
-        def line = oldFile.readLines().get(i)
-        println((i + 1) + ". " + line)
-
-    }
-
-    println("")
-    print("Selection: ")
-
-    userInput = System.in.newReader().readLine()
-
-    if (!userInput.isAllWhitespace()) {
-        if (userInput.isNumber()) {
-            NewFile.createNewFile()
-
-            def replacer = { File source, String toSearch, String replacement ->
-                source.write(source.text.replaceAll(toSearch, replacement))
-            } // Create clousure for removing lines..
-
-            if ((userInput as int).equals(1)) {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\s', '') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/categories.txt')
-            } else if ((userInput as int).equals(linescount)) {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\s+$', '') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/categories.txt')
-            } else {
-                NewFile.withWriter { writer -> writer.write(oldFile.text) }
-                replacer.call(NewFile, fileLines.get(userInput as int - 1), "") // Remove string
-                replacer.call(NewFile, '\\s+', '\n') // Remove extra spaces
-                oldFile.delete()
-                NewFile.renameTo(System.getProperty("user.home") + '/RestoFinder/categories.txt')
-            }
-
-
-            println("Remove operation successful, returning to main menu...")
-            NewFile.delete()
-            sleep(5000) // Wait 5 seconds
-            initializeMainMenu()
-
-        } else {
-            userInput.toLowerCase()
-            if (userInput.contains('cancel')) {
-                println("Remove operation canceled, returning to main menu...")
-                sleep(5000)
-
-                println("")
-                initializeMainMenu()
-            } else {
-                println("Invalid input, please try again!")
-                RemoveCategory()
-            }
-        }
-
-    } else {
-        println("Invalid input, please try again!")
-        RemoveCategory()
-    }
+    RemoveFromFile(System.getProperty("user.home") + '/RestoFinder/categories.txt', System.getProperty("user.home") + '/RestoFinder/categories-temp.txt', "Category")
 }
 //
