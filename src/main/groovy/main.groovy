@@ -1,5 +1,3 @@
-import java.awt.Robot
-
 class Globals {
 
     static def username // input user
@@ -110,6 +108,7 @@ void initializeMainMenu() {
     println("")
     println("---RestoFinder Main Menu---")
     println("Type the number of an option to continue.")
+    println("")
 
     println("1. Search Restaurants")
     println("2. View Category List")
@@ -122,6 +121,7 @@ void initializeMainMenu() {
     if (Globals.userRole == "Administrator") {
 
         println("---Administrative Stuff---")
+        println("")
         println("6. Add Restaurant")
         println("7. Add Location")
         println("8. Add Category")
@@ -134,9 +134,8 @@ void initializeMainMenu() {
     println("")
 
     print("Input: ")
-
     Globals.optionSelected = System.in.newReader().readLine()
-
+    println("")
     switch (Globals.userRole) { // Checking user privileges
 
         case "Administrator":
@@ -193,7 +192,7 @@ void initializeMainMenu() {
                     break
                 default:
                     println("Option number is invalid, please try again!")
-                    sleep(5000)
+                    sleep(3000)
                     initializeMainMenu()
                     break
 
@@ -236,7 +235,7 @@ void AddToFile(String filePath, String factorType) {
                 restoActionFinished = true
                 lines_factorType.append(restoTypeName + '\n')
                 println("Successfully added '" + restoTypeName + "' " + factorType + "!")
-                sleep(5000)
+                sleep(3000)
                 initializeMainMenu()
             }
 
@@ -264,7 +263,7 @@ void RemoveFromFile(String filePath, String tempFilePath, String factorType) {
     println("")
     if (oldFile.text.isAllWhitespace()) {
         println("There's nothing here to show, returning to main menu...")
-        sleep(5000)
+        sleep(3000)
         initializeMainMenu()
     }
 
@@ -300,12 +299,12 @@ void RemoveFromFile(String filePath, String tempFilePath, String factorType) {
 
         println("Remove operation successful, returning to main menu...")
         NewFile.delete()
-        sleep(5000) // Wait 5 seconds
+        sleep(3000) // Wait 3 seconds
         initializeMainMenu()
 
     } else if (userInput.contains('cancel')) {
         println("Remove operation canceled, returning to main menu...")
-        sleep(5000) // Wait 5 seconds
+        sleep(3000) // Wait 3 seconds
         println("")
         initializeMainMenu()
     } else {
@@ -324,6 +323,7 @@ void SearchRestaurants() {
 
     println("--Search Restaurants--")
     println("Type the name of a location, restaurant or category to search. If you want to cancel, type 'exit program'.")
+    println("")
     print("Search: ")
 
     userInput = System.in.newReader().readLine()
@@ -345,32 +345,49 @@ void SearchRestaurants() {
 
     for (String str in SearchLines) {
         int count = 0
+        int foundNum = 0
         if (str.containsIgnoreCase(userInput)) {
 
             for (String s in str.split(" \\| ")) {
+
                 count += 1
 
                 switch (count) {
                     case 1:
                         SearchLinesNames.add(s)
                         if (SearchLinesNames.stream().anyMatch(a -> a.contains(userInput))) {
+                            foundNum = 0
+                            foundNum++
                             MatchingRestaurantList.add(str)
                             isRestoNameFound = true
                         }
-                        break
+
                     case 2:
                         SearchLinesLocations.add(s)
                         if (SearchLinesLocations.stream().anyMatch(a -> a.contains(userInput))) {
-                            MatchingRestaurantList.add(str)
-                            isRestoLocationFound = true
+                            foundNum++
+                            if (foundNum > 1) {
+                                break
+                            } else {
+                                MatchingRestaurantList.add(str)
+                                isRestoLocationFound = true
+                                break
+                            }
                         }
-                        break
+
                     case 3:
                         SearchLinesCategories.add(s)
                         if (SearchLinesCategories.stream().anyMatch(a -> a.contains(userInput))) {
-                            MatchingRestaurantList.add(str)
-                            isRestoCategoryFound = true
+                            foundNum++
+                            if (foundNum > 1) {
+                                break
+                            } else {
+                                MatchingRestaurantList.add(str)
+                                isRestoCategoryFound = true
+                                break
+                            }
                         }
+                    default:
                         break
                 }
             }
@@ -402,7 +419,7 @@ void SearchRestaurants() {
 
     } else if (userInput.contains("exit program")) {
         println("Returning to main menu...")
-        sleep(2000)
+        sleep(3000)
         initializeMainMenu()
     } else {
         println("Found nothing.")
@@ -449,6 +466,7 @@ void ViewLocListFunc() { // View restaurant locations
     println("")
     println("---Actions---")
     println("1. Go back")
+    println("")
     println("Type the number of an option to continue.")
     print("Selection: ")
     userResponse = System.in.newReader().readLine()
@@ -477,6 +495,7 @@ void ViewCategoryListFunc() { // View restaurant categories
     println("")
     println("---Actions---")
     println("1. Go back")
+    println("")
     println("Type the number of an option to continue.")
     print("Selection: ")
     userResponse = System.in.newReader().readLine()
@@ -532,13 +551,12 @@ void AddRestaurant() {
                         if (!restoAddress.isAllWhitespace()) {
 
                             // Add data to their respective files
-                            new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt').withWriter('utf-8') {
-                                writer -> writer.writeLine(restoName + ' | ' + restoLocation + ' | ' + restoCategory + ' | ' + restoAddress)
-                            }
+                            new File(System.getProperty("user.home") + '/RestoFinder/restaurants.txt').append(restoName + ' | ' + restoLocation + ' | ' + restoCategory + ' | ' + restoAddress + "\r\n")
+
 
                             restoActionFinished = true
                             println("Successfully added restaurant to the list!")
-                            sleep(5000)
+                            sleep(3000)
                             initializeMainMenu()
 
                         } else {
